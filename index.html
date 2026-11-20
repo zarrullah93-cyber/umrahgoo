@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕋 Panduan Umrah zarul</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #2e7d32 0%, #4caf50 50%, #81c784 100%);
+            background-size: 400% 400%;
+            animation: bgGradient 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        @keyframes bgGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s ease-out forwards;
+        }
+        .logo { animation-delay: 0.2s; }
+        h1 { animation-delay: 0.4s; }
+        p, .name-form, .btn-group { animation-delay: 0.6s; }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo { font-size: 4rem; margin-bottom: 20px; }
+        h1 { font-size: 2.2rem; margin-bottom: 10px; line-height: 1.3; }
+        h2 { font-size: 1.5rem; margin-bottom: 20px; opacity: 0.95; }
+        p { font-size: 1.05rem; margin-bottom: 30px; opacity: 0.9; max-width: 500px; line-height: 1.6; }
+        
+        .btn {
+            padding: 13px 32px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            background: white;
+            color: #2e7d32;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-block;
+            margin: 8px;
+        }
+        .btn:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+        .btn-green {
+            background: #2e7d32;
+            color: white;
+        }
+
+        /* Borang Nama */
+        .name-form {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 15px;
+            color: #333;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        .name-form h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        .name-form input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: border 0.3s ease;
+        }
+        .name-form input:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+        .name-form button {
+            width: 100%;
+        }
+
+        /* Sembunyi/lindung kandungan */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- Bahagian: Pengguna Lama (Dah Pernah Masuk) -->
+    <div id="returning-view" class="hidden">
+        <div class="logo fade-up">🕋</div>
+        <h1 class="fade-up">Selamat Kembali, <span id="userName">Pengguna</span>! 😊</h1>
+        <p class="fade-up">Semoga Allah memberkati perjalanan dan ibadah anda. Semua kemajuan anda telah disimpan.</p>
+        <div class="btn-group fade-up">
+            <a href="menu.html" class="btn btn-green">Teruskan ▶️</a>
+            <button class="btn btn-secondary" onclick="confirmReset()">Tukar Nama / Pengguna Baru</button>
+        </div>
+    </div>
+
+    <!-- Bahagian: Pengguna Baru -->
+    <div id="new-user-view">
+        <div class="logo fade-up">🕋</div>
+        <h1 class="fade-up">Selamat Datang</h1>
+        <p class="fade-up">Terima kasih kerana menggunakan Panduan Umrah ini. Sila masukkan nama anda untuk memulakan.</p>
+        
+        <div class="name-form fade-up">
+            <h3>👋 Siapa Nama Anda?</h3>
+            <input type="text" id="nameInput" placeholder="Contoh: Siti / Ahmad" maxlength="30">
+            <button class="btn btn-green" onclick="saveName()">Simpan & Mula 🚀</button>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY_NAME = 'umrah-user-name';
+
+        function getUserName() {
+            return localStorage.getItem(STORAGE_KEY_NAME);
+        }
+
+        function saveUserName(name) {
+            localStorage.setItem(STORAGE_KEY_NAME, name.trim());
+        }
+
+        function isReturningUser() {
+            return getUserName() !== null;
+        }
+
+        function showReturningView(name) {
+            document.getElementById('new-user-view').classList.add('hidden');
+            document.getElementById('returning-view').classList.remove('hidden');
+            document.getElementById('userName').textContent = name;
+        }
+
+        function showNewUserView() {
+            document.getElementById('new-user-view').classList.remove('hidden');
+            document.getElementById('returning-view').classList.add('hidden');
+        }
+
+        function saveName() {
+            const nameInput = document.getElementById('nameInput');
+            const name = nameInput.value.trim();
+            
+            if (name === '') {
+                alert('Sila masukkan nama anda ya 😊');
+                nameInput.focus();
+                return;
+            }
+            
+            saveUserName(name);
+            showReturningView(name);
+            
+            // Tunggu sekejap terus ke menu
+            setTimeout(() => {
+                window.location.href = 'menu.html';
+            }, 1000);
+        }
+
+        function confirmReset() {
+            if (confirm('Anda pasti mahu bermula semula sebagai pengguna baru?\n\n⚠️ Semua senarai semak, nota & tasbih akan dipadam!')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        function init() {
+            const name = getUserName();
+            if (name) {
+                showReturningView(name);
+            } else {
+                showNewUserView();
+            }
+        }
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

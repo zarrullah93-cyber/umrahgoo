@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 Pindah Data</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .fade-up {
+            opacity: 0;
+            transform: translateY(25px);
+            animation: fadeUp 0.7s ease-out forwards;
+        }
+        h2 { animation-delay: 0.1s; }
+        .card:nth-of-type(1) { animation-delay: 0.2s; }
+        .card:nth-of-type(2) { animation-delay: 0.35s; }
+        .nav { animation-delay: 0.5s; }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { color: #2e7d32; text-align: center; margin-bottom: 25px; }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        .card:hover { transform: translateY(-2px); }
+        h3 { color: #1b5e20; margin-bottom: 15px; font-size: 1.1rem; }
+        p { color: #555; margin-bottom: 15px; font-size: 0.95rem; line-height: 1.6; }
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-family: monospace;
+            resize: vertical;
+            background: #fefefe;
+            margin-bottom: 12px;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin: 4px;
+        }
+        .btn-green { background: #2e7d32; color: white; }
+        .btn-green:hover { background: #1b5e20; transform: translateY(-2px); }
+        .btn-outline { border: 2px solid #2e7d32; color: #2e7d32; background: transparent; }
+        .btn-outline:hover { background: #2e7d32; color: white; }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+        }
+        .status.success { background: #e8f5e9; color: #2e7d32; display: block; }
+        .status.error { background: #ffebee; color: #c62828; display: block; }
+        .tip {
+            background: #fff8e1;
+            border-left: 3px solid #ff9800;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .nav {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+        }
+        .copy-btn {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <h2 class="fade-up">📦 Pindah Data</h2>
+
+    <!-- Bahagian Eksport (Salin Data dari Peranti Lama) -->
+    <div class="card fade-up">
+        <h3>📤 Langkah 1: Di Peranti Lama — Salin Data</h3>
+        <div class="tip">💡 Ini akan menghasilkan kod yang mengandungi nama, senarai semak, nota & kiraan tasbih anda.</div>
+        <button class="btn btn-green" onclick="eksportData()">📤 Hasilkan Kod Data</button>
+        <textarea id="exportResult" readonly placeholder="Kod data anda akan muncul di sini..." style="display:none;"></textarea>
+        <button class="btn btn-outline copy-btn" id="copyBtn" onclick="salinKod()" style="display:none;">📋 Salin Kod</button>
+        <div id="exportStatus" class="status"></div>
+    </div>
+
+    <!-- Bahagian Import (Pulihkan ke Peranti Baru) -->
+    <div class="card fade-up">
+        <h3>📥 Langkah 2: Di Peranti Baru — Pulihkan Data</h3>
+        <div class="tip">💡 Tampal kod yang anda salin tadi ke dalam kotak di bawah, kemudian tekan Pulihkan.</div>
+        <textarea id="importInput" placeholder="Tampal kod data anda di sini..."></textarea>
+        <button class="btn btn-green" onclick="importData()">🔄 Pulihkan Data</button>
+        <div id="importStatus" class="status"></div>
+    </div>
+
+    <div class="nav fade-up">
+        <a href="menu.html" class="btn btn-outline">⬅️ Kembali ke Menu</a>
+    </div>
+
+    <script>
+        // Senarai SEMUA kunci yang disimpan dalam localStorage
+        const ALL_KEYS = [
+            'umrah-user-name',
+            'checklist',
+            'umrah-steps',
+            'umrah-note'
+        ];
+
+        function eksportData() {
+            const data = {};
+            ALL_KEYS.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value !== null) {
+                    data[key] = value;
+                }
+            });
+
+            if (Object.keys(data).length === 0) {
+                tunjukStatus('exportStatus', '⚠️ Tiada data untuk dieksport.', 'error');
+                return;
+            }
+
+            // Tukar ke string & encode supaya selamat
+            const encoded = btoa(JSON.stringify(data));
+            const textarea = document.getElementById('exportResult');
+            textarea.value = encoded;
+            textarea.style.display = 'block';
+            document.getElementById('copyBtn').style.display = 'inline-block';
+            tunjukStatus('exportStatus', '✅ Kod data telah dihasilkan! Sila salin kod di atas.', 'success');
+        }
+
+        function salinKod() {
+            const kod = document.getElementById('exportResult').value;
+            navigator.clipboard.writeText(kod).then(() => {
+                tunjukStatus('exportStatus', '✅ Kod telah disalin! Tampal di peranti baru anda.', 'success');
+            }).catch(() => {
+                alert('Gagal menyalin. Sila pilih teks dan salin secara manual.');
+            });
+        }
+
+        function importData() {
+            const input = document.getElementById('importInput').value.trim();
+            if (!input) {
+                tunjukStatus('importStatus', '⚠️ Sila tampal kod data terlebih dahulu.', 'error');
+                return;
+            }
+
+            try {
+                // Decode kod
+                const decoded = JSON.parse(atob(input));
+                
+                // Sahkan format data
+                if (typeof decoded !== 'object' || decoded === null) {
+                    throw new Error('Format tidak sah');
+                }
+
+                // Amaran sebelum ganti data sedia ada
+                if (localStorage.getItem('umrah-user-name')) {
+                    if (!confirm('⚠️ Peranti ini sudah ada data.\nData sedia ada akan diganti dengan data yang dipulihkan.\nTeruskan?')) {
+                        return;
+                    }
+                }
+
+                // Simpan semua data
+                let bilanganDipulihkan = 0;
+                for (const key in decoded) {
+                    localStorage.setItem(key, decoded[key]);
+                    bilanganDipulihkan++;
+                }
+
+                tunjukStatus('importStatus', `✅ Berjaya! ${bilanganDipulihkan} item data telah dipulihkan.\n\nHalaman utama akan dimuat semula...`, 'success');
+                
+                // Kosongkan kotak input
+                document.getElementById('importInput').value = '';
+
+                // Tunggu sekejap kemudian balik ke halaman utama
+                setTimeout(() => {
+                    setTimeout(() => {
+                        if (confirm('✅ Data siap dipulihkan!\nTekan OK untuk ke Halaman Utama.')) {
+                            window.location.href = 'index.html';
+                        }
+                    }, 1500);
+                }, 2000);
+
+            } catch (e) {
+                tunjukStatus('importStatus', '❌ Kod tidak sah atau telah rosak. Sila semak dan cuba lagi.', 'error');
+                console.error(e);
+            }
+        }
+
+        function tunjukStatus(id, mesej, jenis) {
+            const el = document.getElementById(id);
+            el.textContent = mesej;
+            el.className = 'status ' + jenis;
+            
+            // Hilangkan mesej kejayaan selepas 8 saat
+            if (jenis === 'success') {
+                setTimeout(() => {
+                    el.style.display = 'none';
+                }, 8000);
+            }
+        }
+    </script>
+</body>
+</html>

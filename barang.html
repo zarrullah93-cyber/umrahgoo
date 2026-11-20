@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎒 Senarai Kelengkapan & Keperluan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        h2 { color: #2e7d32; text-align: center; margin-bottom: 20px; }
+
+        /* Tab Butang */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #ddd;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            background: #2e7d32;
+            color: white;
+        }
+
+        /* Kemajuan */
+        .summary {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .sum-row {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .sum-col { flex: 1; min-width: 80px; }
+        .sum-num { font-size: 1.5rem; font-weight: bold; }
+        .s-done { color: #2e7d32; }
+        .s-pend { color: #ff9800; }
+        .s-pct { color: #1976d2; }
+        .prog-bar {
+            height: 8px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+        .prog-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* Kandungan Tab */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .card h3 { color: #1b5e20; margin-bottom: 12px; font-size: 1.05rem; }
+        ul { list-style: none; }
+        li {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        li:last-child { border-bottom: none; }
+        li:hover { background: #f9f9f9; padding-left: 12px; }
+        li.checked { color: #888; text-decoration: line-through; }
+        li::before { content: '⬜'; font-size: 0.9rem; }
+        li.checked::before { content: '✅'; }
+
+        .nav {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+        }
+        .btn {
+            padding: 10px 22px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #2e7d32;
+            color: #2e7d32;
+        }
+        .btn-outline:hover { background: #2e7d32; color: white; }
+    </style>
+</head>
+<body>
+    <h2>🎒 Senarai Kelengkapan & Keperluan</h2>
+
+    <!-- Tab Pilihan -->
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('barang')">🎒 Kelengkapan Umum</button>
+        <button class="tab" onclick="switchTab('lelaki')">🧕 Untuk Lelaki</button>
+        <button class="tab" onclick="switchTab('wanita')">👩 Untuk Wanita</button>
+    </div>
+
+    <!-- Kemajuan -->
+    <div class="summary">
+        <div class="sum-row">
+            <div class="sum-col">
+                <div class="sum-num s-done" id="s-done">0</div>
+                <div style="font-size:0.85rem; color:#666;">✅ Siap</div>
+            </div>
+            <div class="sum-col">
+                <div class="sum-num s-pend" id="s-pend">0</div>
+                <div style="font-size:0.85rem; color:#666;">⏳ Belum Siap</div>
+            </div>
+            <div class="sum-col">
+                <div class="sum-num s-pct" id="s-pct">0%</div>
+                <div style="font-size:0.85rem; color:#666;">📈 Kemajuan</div>
+            </div>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="s-bar"></div></div>
+    </div>
+
+    <!-- BAHAGIAN 1: KELENGKAPAN UMUM -->
+    <div class="tab-content active" id="barang">
+        <div class="card">
+            <h3>📦 Barang Peribadi & Dokumen</h3>
+            <ul>
+                <li data-id="b1">🕋 Pasport & salinan pasport</li>
+                <li data-id="b2">✈️ Tiket penerbangan & dokumen umrah</li>
+                <li data-id="b3">💵 Duit tunai & kad bank</li>
+                <li data-id="b4">📞 Nombor kecemasan & senarai kenalan</li>
+                <li data-id="b5">📖 Buku panduan / doa</li>
+                <li data-id="b6">🖼️ Gambar pas (untuk keperluan visa)</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>🧼 Kebersihan Diri & Kesihatan</h3>
+            <ul>
+                <li data-id="b7">🧴 Sabun, syampu & sikat rambut</li>
+                <li data-id="b8">🦷 Berus & ubat gigi</li>
+                <li data-id="b9">🧻 Tisu muka & tisu tandas</li>
+                <li data-id="b10">💊 Ubat-ubatan peribadi (demam, sakit perut, dll.)</li>
+                <li data-id="b11">🧪 Losyen & krim keperluan diri</li>
+                <li data-id="b12">🩹 Plaster & ubat luka</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>👕 Pakaian & Lain-lain</h3>
+            <ul>
+                <li data-id="b13">👔 Pakaian ganti yang cukup</li>
+                <li data-id="b14">🧦 Stokin & seluar dalam tambahan</li>
+                <li data-id="b15">👟 Kasut / sandal selesa</li>
+                <li data-id="b16">🎒 Beg kecil untuk bawa barang keperluan segera</li>
+                <li data-id="b17">🔌 Penyesuai soket elektrik</li>
+                <li data-id="b18">📱 Telefon bimbit & pengecas</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- BAHAGIAN 2: LELAKI -->
+    <div class="tab-content" id="lelaki">
+        <div class="card">
+            <h3>👤 Pakaian & Keperluan Lelaki</h3>
+            <ul>
+                <li data-id="lm1">Ihram (2 helai kain — tidak dijahit)</li>
+                <li data-id="lm2">Tali pinggang / beg pinggang kecil</li>
+                <li data-id="lm3">Seluar dalam & stokin</li>
+                <li data-id="lm4">Baju solat / jubah lelaki</li>
+                <li data-id="lm5">Sandal / kasut yang mudah dibuka</li>
+                <li data-id="lm6">Cukur rambut & misai (sebelum berlepas)</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>💉 Kesihatan & Dokumen</h3>
+            <ul>
+                <li data-id="lh1">Buku Vaksin / Sijil Vaksinasi lengkap</li>
+                <li data-id="lh2">Polisi Insurans Perubatan (salinan & nombor kecemasan)</li>
+                <li data-id="lh3">Pasport (asal + salinan berasingan)</li>
+                <li data-id="lh4">Tiket Penerbangan & Dokumen Umrah</li>
+                <li data-id="lh5">Senarai ubat-ubatan peribadi + preskripsi</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- BAHAGIAN 3: WANITA -->
+    <div class="tab-content" id="wanita">
+        <div class="card">
+            <h3>👩 Pakaian & Keperluan Wanita</h3>
+            <ul>
+                <li data-id="wm1">Pakaian Ihram Wanita: Labuh, tertutup, tidak ketat, tidak telus</li>
+                <li data-id="wm2">Telekung / Baju Solat lengkap</li>
+                <li data-id="wm3">Tudung & selendang tambahan</li>
+                <li data-id="wm4">Sarung rambut</li>
+                <li data-id="wm5">Seluar dalam & pakaian ganti yang cukup</li>
+                <li data-id="wm6">Beg tangan kecil untuk barang keperluan segera</li>
+                <li data-id="wm7">Kasut / sandal yang sopan & selesa</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>💉 Kesihatan & Dokumen</h3>
+            <ul>
+                <li data-id="wh1">Buku Vaksin / Sijil Vaksinasi lengkap</li>
+                <li data-id="wh2">Polisi Insurans Perubatan (salinan & nombor kecemasan)</li>
+                <li data-id="wh3">Pasport (asal + salinan berasingan)</li>
+                <li data-id="wh4">Tiket Penerbangan & Dokumen Umrah</li>
+                <li data-id="wh5">Senarai ubat-ubatan peribadi + preskripsi</li>
+                <li data-id="wh6">Keperluan wanita / kebersihan diri</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="nav">
+        <a href="menu.html" class="btn btn-outline">⬅️ Kembali ke Menu Utama</a>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'umrah-checklist-combined';
+        let activeTab = 'barang';
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            // Tukar butang aktif
+            document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            // Tukar kandungan
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            updateSummary();
+        }
+
+        function saveData() {
+            const data = {};
+            document.querySelectorAll('li').forEach(item => {
+                data[item.dataset.id] = item.classList.contains('checked');
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const itemsInTab = document.querySelectorAll(`#${activeTab} li`);
+            const total = itemsInTab.length;
+            const done = Array.from(itemsInTab).filter(li => li.classList.contains('checked')).length;
+            const pending = total - done;
+            const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+            
+            document.getElementById('s-done').textContent = done;
+            document.getElementById('s-pend').textContent = pending;
+            document.getElementById('s-pct').textContent = percent + '%';
+            document.getElementById('s-bar').style.width = percent + '%';
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const data = JSON.parse(saved);
+                for (let id in data) {
+                    const el = document.querySelector(`li[data-id="${id}"]`);
+                    if (el && data[id]) el.classList.add('checked');
+                }
+            }
+            updateSummary();
+        }
+
+        // Klik tandakan
+        document.querySelectorAll('li').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('checked');
+                saveData();
+            });
+        });
+
+        window.addEventListener('load', loadData);
+    </script>
+</body>
+</html>

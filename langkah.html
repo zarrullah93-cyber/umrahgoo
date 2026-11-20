@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📖 Langkah Demi Langkah Umrah</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        h2 { color: #2e7d32; text-align: center; margin-bottom: 25px; }
+        
+        /* Penunjuk Kemajuan */
+        .progress-bar {
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .step-counter {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        /* Kotak Langkah */
+        .step-container {
+            position: relative;
+            min-height: 400px;
+        }
+        .step {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 4px solid #2e7d32;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .step.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h3 { margin-bottom: 15px; color: #1b5e20; font-size: 1.25rem; }
+        .num {
+            display: inline-block;
+            background: #2e7d32;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+        .instr {
+            background: #fff8e1;
+            border-left: 3px solid #ff9800;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 12px 0;
+        }
+        .ar {
+            font-size: 1.5rem;
+            line-height: 2;
+            direction: rtl;
+            padding: 15px;
+            background: #f1f8e9;
+            border-radius: 6px;
+            margin: 12px 0;
+        }
+        .la { font-style: italic; color: #555; margin-bottom: 6px; }
+        .me { color: #333; margin-bottom: 10px; }
+        
+        /* Kotak Tandakan */
+        .check-container {
+            margin: 20px 0;
+            padding: 12px;
+            background: #f8f8f8;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .check-container:hover {
+            background: #f0f0f0;
+        }
+        .check-container.checked {
+            background: #e8f5e9;
+        }
+        .check-container input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+        }
+        .check-label {
+            font-size: 1rem;
+            color: #333;
+        }
+
+        /* Butang Navigasi */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding-top: 20px;
+        }
+        .btn {
+            padding: 12px 24px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .btn-prev {
+            background: transparent;
+            border: 2px solid #757575;
+            color: #757575;
+        }
+        .btn-prev:hover {
+            background: #757575;
+            color: white;
+        }
+        .btn-next {
+            background: #ccc;
+            color: #888;
+            cursor: not-allowed;
+        }
+        .btn-next.enabled {
+            background: #2e7d32;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-next.enabled:hover {
+            background: #1b5e20;
+            transform: translateX(3px);
+        }
+        .btn-finish {
+            background: #2e7d32;
+            color: white;
+        }
+        .btn-finish:hover {
+            background: #1b5e20;
+            transform: scale(1.03);
+        }
+
+        /* Mesej Tahniah */
+        .congrats {
+            background: #e8f5e9;
+            text-align: center;
+            padding: 40px 30px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+        .congrats.show {
+            display: block;
+        }
+        .congrats h3 { font-size: 1.5rem; margin-bottom: 15px; }
+        .congrats p { margin-bottom: 25px; font-size: 1.05rem; }
+        
+        /* Bawah */
+        .bottom-nav {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn-back {
+            background: transparent;
+            border: 2px solid #2e7d32;
+            color: #2e7d32;
+        }
+        .btn-back:hover {
+            background: #2e7d32;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h2>📖 Langkah Demi Langkah Umrah</h2>
+
+    <!-- Bar Kemajuan -->
+    <div class="step-counter" id="stepCounter">Langkah 1 daripada 6</div>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="step-container">
+        <!-- LANGKAH 1: Niat -->
+        <div class="step active" data-step="1">
+            <h3><span class="num">1</span> Niat & Memakai Ihram</h3>
+            <div class="instr"><strong>📌 Arahan:</strong> Sebelum masuk ke Miqat, mandi sunat, bersihkan diri, pakai pakaian Ihram, kemudian ucapkan niat.</div>
+            <div class="ar">أَللَّهُمَّ إِنِّي أُرِيْدُ الْعُمْرَةَ فَيَسِّرْهَا لِي وَتَقَبَّلْهَا مِنِّي</div>
+            <div class="la">Allāhumma innii uriidul 'umrata fa yassirhaa lii wa taqabbalhaa minnii</div>
+            <div class="me">Ya Allah, sesungguhnya aku berniat menunaikan Umrah, maka mudahkanlah ia untukku dan terimalah ia daripadaku.</div>
+            
+            <label class="check-container" id="check1">
+                <input type="checkbox" id="done1" onchange="updateCheck(1)">
+                <span class="check-label">✅ Saya telah selesai melakukan langkah ini</span>
+            </label>
+        </div>
+
+        <!-- LANGKAH 2: Tawaf -->
+        <div class="step" data-step="2">
+            <h3><span class="num">2</span> Tawaf (7 Pusingan)</h3>
+            <div class="instr"><strong>📌 Arahan:</strong> Mulakan dari Hajar Aswad, berjalan mengelilingi Kaabah sebanyak 7 pusingan.</div>
+            
+            <p><strong>Pusingan 1:</strong></p>
+            <div class="ar">بِسْمِ اللَّهِ وَاللَّهُ أَكْبَرُ</div>
+            <div class="la">Bismillāhi wallāhu Akbar</div>
+            <div class="me">Dengan nama Allah, dan Allah Maha Besar.</div>
+            
+            <p style="margin-top:12px;"><strong>Pusingan 2:</strong></p>
+            <div class="ar">يَا ذَا الْجَلَالِ وَالْإِكْرَامِ</div>
+            <div class="la">Yā Dzal-Jalāli wal-Ikrām</div>
+            <div class="me">Wahai Tuhan Yang Maha Agung dan Maha Mulia.</div>
+
+            <p style="margin-top:12px;"><strong>Pusingan 3:</strong></p>
+            <div class="ar">يَا حَيُّ يَا قَيُّومُ إِنِّي أَسْأَلُكَ رَحْمَةً</div>
+            <div class="la">Yā Hayyu Yā Qayyūm, innii as-aluka rahmatan</div>
+            <div class="me">Wahai Yang Hidup, Wahai Yang Berdiri Sendiri, aku memohon rahmat-Mu.</div>
+
+            <p style="margin-top:12px;"><strong>Pusingan 4:</strong></p>
+            <div class="ar">اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الشَّكِّ وَالشِّرْكِ وَالشِّقَاقِ</div>
+            <div class="la">Allāhumma innii a'uudzu bika minasy-syakki wasy-syirki wasy-syiqaaq</div>
+            <div class="me">Ya Allah, aku berlindung kepada-Mu daripada keraguan, syirik dan perpecahan.</div>
+
+            <p style="margin-top:12px;"><strong>Pusingan 5:</strong></p>
+            <div class="ar">اللَّهُمَّ اجْعَلْهَا حَجًّا مَبْرُورًا وَذَنْبًا مَغْفُورًا</div>
+            <div class="la">Allāhumma ij'alhaa hajjan mabrūran wa dzamban maghfūraa</div>
+            <div class="me">Ya Allah, jadikanlah ia ibadah yang diterima dan dosa yang diampuni.</div>
+
+            <p style="margin-top:12px;"><strong>Pusingan 6:</strong></p>
+            <div class="ar">اللَّهُمَّ إِنِّي أَسْأَلُكَ عَفْوًا وَعَافِيَةً فِي الدُّنْيَا وَالْآخِرَةِ</div>
+            <div class="la">Allāhumma innii as-aluka 'afwan wa 'aafiyatan fid-dunyaa wal-aakhirah</div>
+            <div class="me">Ya Allah, aku memohon keampunan dan kesihatan di dunia dan akhirat.</div>
+
+            <p style="margin-top:12px;"><strong>Pusingan 7:</strong></p>
+            <div class="ar">رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ</div>
+            <div class="la">Rabbanaa aatinaa fid-dunyaa hasanah, wa fil-aakhirati hasanah, wa qinaa 'adzaaban-naar</div>
+            <div class="me">Ya Tuhan kami, berikanlah kami kebaikan di dunia dan kebaikan di akhirat, dan lindungilah kami daripada azab neraka.</div>
+            
+            <label class="check-container" id="check2">
+                <input type="checkbox" id="done2" onchange="updateCheck(2)">
+                <span class="check-label">✅ Saya telah selesai melakukan langkah ini</span>
+            </label>
+        </div>
+
+        <!-- LANGKAH 3: Solat Sunat Tawaf -->
+        <div class="step" data-step="3">
+            <h3><span class="num">3</span> Solat Sunat Tawaf</h3>
+            <div class="instr"><strong>📌 Arahan:</strong> Selepas selesai 7 pusingan, lakukan solat sunat 2 rakaat di belakang Maqam Ibrahim.</div>
+            <p><strong>Rakaat Pertama:</strong> Baca Surah Al-Kafirun</p>
+            <p><strong>Rakaat Kedua:</strong> Baca Surah Al-Ikhlas</p>
+            
+            <label class="check-container" id="check3">
+                <input type="checkbox" id="done3" onchange="updateCheck(3)">
+                <span class="check-label">✅ Saya telah selesai melakukan langkah ini</span>
+            </label>
+        </div>
+
+        <!-- LANGKAH 4: Minum Zamzam -->
+        <div class="step" data-step="4">
+            <h3><span class="num">4</span> Minum Air Zamzam</h3>
+            <div class="instr"><strong>📌 Arahan:</strong> Minum air Zamzam sambil menghadap Kaabah, berdoa dengan niat yang baik.</div>
+            <div class="ar">اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا وَرِزْقًا وَاسِعًا وَشِفَاءً مِنْ كُلِّ دَاءٍ</div>
+            <div class="la">Allāhumma innii as-aluka 'ilman naafi'an wa rizqan waasi'an wa syifaa-an min kulli daa-in</div>
+            <div class="me">Ya Allah, aku memohon ilmu yang bermanfaat, rezeki yang luas dan penyembuh daripada segala penyakit.</div>
+            
+            <label class="check-container" id="check4">
+                <input type="checkbox" id="done4" onchange="updateCheck(4)">
+                <span class="check-label">✅ Saya telah selesai melakukan langkah ini</span>
+            </label>
+        </div>
+
+        <!-- LANGKAH 5: Sa'i -->
+        <div class="step" data-step="5">
+            <h3><span class="num">5</span> Sa'i — Antara Safa dan Marwah</h3>
+            <div class="instr"><strong>📌 Arahan:</strong> Mulakan dari Bukit Safa, berjalan ke Marwah, dan ulang sebanyak 7 kali perjalanan.</div>
+            <div class="ar">إِنَّ الصَّفَا وَالْمَرْوَةَ مِنْ شَعَائِرِ اللَّهِ</div>
+            <div class="la">Innas-safaa wal-marwata min syaaa-irillāh</div>
+            <div class="me">Sesungguhnya Safa dan Marwah adalah daripada lambang-lambang ibadah Allah.</div>
+            
+            <label class="check-container" id="check5">
+                <input type="checkbox" id="done5" onchange="updateCheck(5)">
+                <span class="check-label">✅ Saya telah selesai melakukan langkah ini</span>
+            </label>
+        </div>
+
+        <!-- LANGKAH 6: Tahallul -->
+        <div class="step" data-step="6">
+            <h3><span class="num">6</span> Tahallul — Menghilangkan Ihram</h3>
+            <div class="instr"><strong>📌 Arahan:</strong> Lelaki: Potong rambut sekurang-kurangnya 3 jengkal atau cukur habis. Wanita: Potong hujung rambut sepanjang satu jari.</div>
+            <div class="ar">اللَّهُمَّ اغْفِرْ لِي وَارْحَمْنِي وَتَجَاوَزْ عَنِّي لِمَا تَعْلَمُ إِنَّكَ أَنْتَ الْأَعَزُّ الْأَكْرَمُ</div>
+            <div class="la">Allāhumma ighfirlii warhamnii wa tajaawaz 'annii limaa ta'lamu innaka antal-A'azzul-Akram</div>
+            <div class="me">Ya Allah, ampunilah aku, rahmatilah aku, dan maafkanlah aku atas apa yang Engkau ketahui.</div>
+            
+            <label class="check-container" id="check6">
+                <input type="checkbox" id="done6" onchange="updateCheck(6)">
+                <span class="check-label">✅ Saya telah selesai melakukan langkah ini</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Butang Navigasi -->
+    <div class="nav-buttons">
+        <button class="btn btn-prev" id="prevBtn" onclick="prevStep()" style="visibility:hidden;">⬅️ Sebelumnya</button>
+        <button class="btn btn-next" id="nextBtn" onclick="nextStep()">Tandakan Selesai Dahulu ➡️</button>
+    </div>
+
+        <!-- Mesej Tahniah -->
+    <div class="congrats" id="congratsMsg">
+        <h3>🎉 Tahniah!</h3>
+        <p>Anda telah selesai menunaikan ibadah Umrah.<br>Semoga Allah menerima amalan anda!</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;">
+            <a href="menu.html" class="btn btn-finish">🏠 Kembali ke Menu Utama</a>
+            <button class="btn btn-outline" onclick="mulaSemula()">🔄 Mula Semula dari Langkah 1</button>
+        </div>
+    </div>
+
+
+    <!-- Bawah: Pautan Lain -->
+    <div class="bottom-nav">
+        <a href="barang.html" class="btn btn-back">⬅️ Senarai Barang</a>
+    </div>
+
+    <script>
+        const TOTAL_STEPS = 6;
+        let currentStep = 1;
+
+        // Simpan & muat semula kemajuan
+        function saveProgress() {
+            const steps = {};
+            for (let i = 1; i <= TOTAL_STEPS; i++) {
+                steps['s' + i] = document.getElementById('done' + i).checked;
+            }
+        localStorage.setItem('umrah-steps', JSON.stringify(steps));
+        updateProgressBar();
+    }
+
+    function loadProgress() {
+        const saved = localStorage.getItem('umrah-steps');
+        if (saved) {
+            const steps = JSON.parse(saved);
+            for (let i = 1; i <= TOTAL_STEPS; i++) {
+                const checkbox = document.getElementById('done' + i);
+                checkbox.checked = steps['s' + i] || false;
+                const checkContainer = document.getElementById('check' + i);
+                if (checkbox.checked) {
+                    checkContainer.classList.add('checked');
+                }
+            }
+        }
+        updateProgressBar();
+        updateNextButton();
+    }
+
+    function updateCheck(stepNum) {
+        const checkBox = document.getElementById('done' + stepNum);
+        const checkContainer = document.getElementById('check' + stepNum);
+        
+        if (checkBox.checked) {
+            checkContainer.classList.add('checked');
+        } else {
+            checkContainer.classList.remove('checked');
+        }
+        
+        saveProgress();
+        updateNextButton();
+    }
+
+    function updateProgressBar() {
+        let completed = 0;
+        for (let i = 1; i <= TOTAL_STEPS; i++) {
+            if (document.getElementById('done' + i).checked) completed++;
+        }
+        const percent = (completed / TOTAL_STEPS) * 100;
+        document.getElementById('progressFill').style.width = percent + '%';
+        document.getElementById('stepCounter').textContent = `Langkah ${currentStep} daripada ${TOTAL_STEPS}`;
+    }
+
+    function updateNextButton() {
+        const currentCheckbox = document.getElementById('done' + currentStep);
+        const nextBtn = document.getElementById('nextBtn');
+        
+        if (currentCheckbox.checked) {
+            nextBtn.classList.add('enabled');
+            if (currentStep === TOTAL_STEPS) {
+                nextBtn.textContent = '✅ Siap!';
+            } else {
+                nextBtn.textContent = 'Langkah Seterusnya ➡️';
+            }
+        } else {
+            nextBtn.classList.remove('enabled');
+            nextBtn.textContent = 'Tandakan Selesai Dahulu ➡️';
+        }
+    }
+
+    function showStep(stepNum) {
+        // Sembunyikan semua langkah
+        document.querySelectorAll('.step').forEach(step => {
+            step.classList.remove('active');
+        });
+        
+        // Tunjuk langkah semasa
+        document.querySelector(`.step[data-step="${stepNum}"]`).classList.add('active');
+        
+        // Kemaskini butang navigasi
+        document.getElementById('prevBtn').style.visibility = stepNum > 1 ? 'visible' : 'hidden';
+        
+        currentStep = stepNum;
+        document.getElementById('stepCounter').textContent = `Langkah ${currentStep} daripada ${TOTAL_STEPS}`;
+        updateNextButton();
+    }
+
+    function nextStep() {
+        const currentCheckbox = document.getElementById('done' + currentStep);
+        
+        if (!currentCheckbox.checked) {
+            alert('Sila tandakan selesai dahulu sebelum ke langkah seterusnya ya 😊');
+            return;
+        }
+        
+        if (currentStep < TOTAL_STEPS) {
+            showStep(currentStep + 1);
+        } else {
+            // Semua langkah selesai — tunjuk mesej tahniah
+            document.querySelector('.step-container').style.display = 'none';
+            document.querySelector('.nav-buttons').style.display = 'none';
+            document.getElementById('congratsMsg').classList.add('show');
+            document.querySelector('.bottom-nav').style.display = 'none';
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 1) {
+            showStep(currentStep - 1);
+        }
+    }
+
+    // Mulakan
+    window.addEventListener('load', () => {
+        loadProgress();
+        
+        // Cari langkah pertama yang belum selesai
+        let startStep = 1;
+        for (let i = 1; i <= TOTAL_STEPS; i++) {
+            if (!document.getElementById('done' + i).checked) {
+                startStep = i;
+                break;
+            }
+            startStep = TOTAL_STEPS; // Kalau semua dah siap, tunjuk langkah terakhir
+        }
+        
+        showStep(startStep);
+        
+        // Kalau semua dah siap, terus tunjuk mesej tahniah
+        const allDone = document.getElementById('done1').checked &&
+                        document.getElementById('done2').checked &&
+                        document.getElementById('done3').checked &&
+                        document.getElementById('done4').checked &&
+                        document.getElementById('done5').checked &&
+                        document.getElementById('done6').checked;
+        
+        if (allDone) {
+            document.querySelector('.step-container').style.display = 'none';
+            document.querySelector('.nav-buttons').style.display = 'none';
+            document.getElementById('congratsMsg').classList.add('show');
+            document.querySelector('.bottom-nav').style.display = 'none';
+        }
+    });
+        function mulaSemula() {
+        if (confirm('⚠️ Anda pasti mahu bermula semula dari Langkah 1?\n\nSemua tanda selesai akan dipadam!')) {
+            // Kosongkan semua kotak tandakan
+            for (let i = 1; i <= TOTAL_STEPS; i++) {
+                document.getElementById('done' + i).checked = false;
+                document.getElementById('check' + i).classList.remove('checked');
+            }
+            saveProgress();
+            
+            // Tunjukkan semula langkah-langkah dan butang navigasi
+            document.querySelector('.step-container').style.display = 'block';
+            document.querySelector('.nav-buttons').style.display = 'flex';
+            document.getElementById('congratsMsg').classList.remove('show');
+            document.querySelector('.bottom-nav').style.display = 'flex';
+            
+            // Kembali ke langkah pertama
+            showStep(1);
+        }
+    }
+
+    </script>
+</body>
+</html>
+
+

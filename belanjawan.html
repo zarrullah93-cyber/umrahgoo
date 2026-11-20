@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 Pengurusan Duit & Belanjawan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            max-width: 550px;
+            margin: 0 auto;
+        }
+        h2 { color: #2e7d32; text-align: center; margin-bottom: 25px; }
+
+        /* Kotak Jumlah Duit */
+        .balance-card {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.25);
+        }
+        .balance-label { font-size: 1rem; opacity: 0.9; margin-bottom: 8px; }
+        .balance-amt { font-size: 2.5rem; font-weight: bold; }
+        .balance-unit { font-size: 1rem; opacity: 0.85; }
+
+        /* Borang Kemas Kini Baki */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .card h3 { color: #1b5e20; margin-bottom: 15px; font-size: 1.05rem; }
+        input, select {
+            width: 100%;
+            padding: 11px 14px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            transition: border 0.3s ease;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .btn-green { background: #2e7d32; color: white; }
+        .btn-green:hover { background: #1b5e20; }
+        .btn-red { background: #e64a19; color: white; margin-top: 8px; }
+        .btn-red:hover { background: #d84315; }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #2e7d32;
+            color: #2e7d32;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-outline:hover { background: #2e7d32; color: white; }
+
+        /* Senarai Transaksi */
+        .tx-history h3 { color: #1b5e20; margin-bottom: 12px; font-size: 1.05rem; }
+        .tx-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s ease;
+        }
+        .tx-item:hover { background: #f9f9f9; }
+        .tx-item:last-child { border-bottom: none; }
+        .tx-name { flex: 1; }
+        .tx-amt { font-weight: 600; }
+        .tx-out { color: #e64a19; }
+        .tx-in { color: #2e7d32; }
+        .tx-date { font-size: 0.75rem; color: #999; margin-right: 10px; }
+        .empty { text-align: center; color: #888; padding: 20px; font-style: italic; }
+
+        .nav {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2>💰 Pengurusan Duit & Belanjawan</h2>
+
+    <!-- Paparan Baki Semasa -->
+    <div class="balance-card">
+        <div class="balance-label">Baki Semasa</div>
+        <div class="balance-amt" id="displayBalance">0.00</div>
+        <div class="balance-unit" id="displayUnit">SAR</div>
+    </div>
+
+    <!-- Tetapkan Jumlah Asal -->
+    <div class="card">
+        <h3>💵 Tetapkan Jumlah Duit Asal</h3>
+        <input type="number" id="initialAmount" placeholder="Contoh: 1000" onkeydown="if(event.key==='Enter')setInitial()">
+        <select id="currency">
+            <option value="SAR">Riyal Arab Saudi (SAR)</option>
+            <option value="MYR">Ringgit Malaysia (MYR)</option>
+            <option value="USD">Dolar AS (USD)</option>
+            <option value="IDR">Rupiah Indonesia (IDR)</option>
+            <option value="SGD">Dolar
+Singapura (SGD)</option>
+        </select>
+        <button class="btn btn-green" onclick="setInitial()">✅ Tetapkan Jumlah</button>
+    </div>
+
+    <!-- Rekod Perbelanjaan -->
+    <div class="card">
+        <h3>📝 Catat Perbelanjaan / Penerimaan</h3>
+        <input type="text" id="txDesc" placeholder="Penerangan: contoh — Makan, Bas, Air Zamzam">
+        <input type="number" id="txAmount" placeholder="Jumlah: contoh — 25">
+        <select id="txType">
+            <option value="out">➖ Perbelanjaan (Tolak)</option>
+            <option value="in">➕ Tambah Duit Masuk</option>
+        </select>
+        <button class="btn btn-green" onclick="addTransaction()">➕ Simpan Catatan</button>
+    </div>
+
+    <!-- Sejarah Transaksi -->
+    <div class="card tx-history">
+        <h3>📋 Sejarah Transaksi</h3>
+        <div id="txList">
+            <div class="empty">Belum ada sebarang catatan</div>
+        </div>
+        <button class="btn btn-red" onclick="clearAll()">🗑️ Kosongkan Semua Data</button>
+    </div>
+
+    <div class="nav">
+        <a href="menu.html" class="btn btn-outline">⬅️ Kembali ke Menu Utama</a>
+    </div>
+
+    <script>
+        const STORAGE_BALANCE = 'umrah-balance';
+        const STORAGE_CURRENCY = 'umrah-currency';
+        const STORAGE_TX = 'umrah-transactions';
+
+        let balance = 0;
+        let currency = 'SAR';
+        let transactions = [];
+
+        const currencySymbols = {
+            SAR: 'SAR',
+            MYR: 'RM',
+            USD: 'US$',
+            IDR: 'Rp',
+            SGD: 'S$'
+        };
+
+        function loadData() {
+            const savedBalance = localStorage.getItem(STORAGE_BALANCE);
+            const savedCurrency = localStorage.getItem(STORAGE_CURRENCY);
+            const savedTx = localStorage.getItem(STORAGE_TX);
+
+            if (savedBalance) balance = parseFloat(savedBalance);
+            if (savedCurrency) currency = savedCurrency;
+            if (savedTx) transactions = JSON.parse(savedTx);
+
+            updateDisplay();
+            renderTransactions();
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_BALANCE, balance.toString());
+            localStorage.setItem(STORAGE_CURRENCY, currency);
+            localStorage.setItem(STORAGE_TX, JSON.stringify(transactions));
+        }
+
+        function updateDisplay() {
+            const symbol = currencySymbols[currency] || currency;
+            document.getElementById('displayBalance').textContent = balance.toFixed(2);
+            document.getElementById('displayUnit').textContent = symbol;
+        }
+
+        function setInitial() {
+            const input = document.getElementById('initialAmount').value;
+            const newCurrency = document.getElementById('currency').value;
+            
+            if (!input || parseFloat(input) <= 0) {
+                alert('Sila masukkan jumlah yang sah ya 😊');
+                return;
+            }
+            
+            if (transactions.length > 0) {
+                if (!confirm('⚠️ Anda sudah ada rekod transaksi.\nMenukar jumlah asal akan memadam semua rekod sedia ada.\nTeruskan?')) {
+                    return;
+                }
+            }
+            
+            balance = parseFloat(input);
+            currency = newCurrency;
+            transactions = [];
+            saveData();
+            updateDisplay();
+            renderTransactions();
+            document.getElementById('initialAmount').value = '';
+            alert(`✅ Jumlah asal telah ditetapkan: ${currencySymbols[currency]} ${balance.toFixed(2)}`);
+        }
+
+        function addTransaction() {
+            const desc = document.getElementById('txDesc').value.trim();
+            const amount = parseFloat(document.getElementById('txAmount').value);
+            const type = document.getElementById('txType').value;
+
+            if (!desc) { alert('Sila tulis penerangan ya 😊'); return; }
+            if (!amount || amount <= 0) { alert('Sila masukkan jumlah yang sah 😊'); return; }
+            if (balance === 0 && type === 'out') {
+                alert('⚠️ Sila tetapkan jumlah duit asal dahulu sebelum mencatat perbelanjaan!');
+                return;
+            }
+
+            // Kemaskini baki
+            if (type === 'out') {
+                balance -= amount;
+            } else {
+                balance += amount;
+            }
+
+            // Tambah ke senarai
+            const now = new Date();
+            const time = now.toLocaleDateString('ms') + ' ' + now.toLocaleTimeString('ms', {hour:'2-digit', minute:'2-digit'});
+            
+            transactions.unshift({
+                id: Date.now(),
+                desc: desc,
+                amount: amount,
+                type: type,
+                time: time
+            });
+
+            saveData();
+            updateDisplay();
+            renderTransactions();
+
+            // Kosongkan input
+            document.getElementById('txDesc').value = '';
+            document.getElementById('txAmount').value = '';
+        }
+
+        function renderTransactions() {
+            const list = document.getElementById('txList');
+            
+            if (transactions.length === 0) {
+                list.innerHTML = '<div class="empty">Belum ada sebarang catatan</div>';
+                return;
+            }
+
+            list.innerHTML = transactions.map(tx => {
+                const symbol = currencySymbols[currency] || currency;
+                const sign = tx.type === 'out' ? '-' : '+';
+                const cls = tx.type === 'out' ? 'tx-out' : 'tx-in';
+                return `
+                    <div class="tx-item">
+                        <div>
+                            <div class="tx-date">${tx.time}</div>
+                            <div>${tx.desc}</div>
+                        </div>
+                        <div class="tx-amt ${cls}">${sign} ${symbol} ${tx.amount.toFixed(2)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function clearAll() {
+            if (confirm('⚠️ Anda pasti mahu memadam SEMUA data?\n\nTindakan ini tidak boleh dibatalkan!')) {
+                localStorage.removeItem(STORAGE_BALANCE);
+                localStorage.removeItem(STORAGE_CURRENCY);
+                localStorage.removeItem(STORAGE_TX);
+                balance = 0;
+                transactions = [];
+                updateDisplay();
+                renderTransactions();
+                alert('✅ Semua data telah dipadamkan!');
+            }
+        }
+
+        window.addEventListener('load', loadData);
+    </script>
+</body>
+</html>

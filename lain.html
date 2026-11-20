@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Nota & 🕌 Tasbih Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* Animasi muncul */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(25px);
+            animation: fadeUp 0.7s ease-out forwards;
+        }
+        .card:first-of-type { animation-delay: 0.15s; }
+        .card:last-of-type { animation-delay: 0.35s; }
+        .nav { animation-delay: 0.55s; }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 { color: #2e7d32; text-align: center; margin-bottom: 20px; }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.12);
+        }
+        h3 { color: #1b5e20; margin-bottom: 15px; text-align: center; }
+        textarea {
+            width: 100%;
+            min-height: 220px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            background: #fefefe;
+            transition: all 0.3s ease;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.15);
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 1rem
+            ;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px 5px 5px 0;
+            transition: all 0.3s ease;
+        }
+        .btn-green { background: #2e7d32; color: white; }
+        .btn-green:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #2e7d32;
+            color: #2e7d32;
+        }
+        .btn-outline:hover {
+            background: #2e7d32;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .status {
+            color: #2e7d32;
+            margin-top: 10px;
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Tasbih */
+        .tasbih-box { text-align: center; padding: 10px; }
+        .t-name {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .t-count {
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+            margin: 20px 0;
+            transition: transform 0.2s ease;
+        }
+        .t-count.changed {
+            animation: pop 0.3s ease;
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .t-btn {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(46,125,50,0.35);
+            margin: 10px;
+            transition: all 0.2s ease;
+        }
+        .t-btn:hover {
+            background: #1b5e20;
+            transform: scale(1.05);
+        }
+        .t-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 6px rgba(46,125,50,0.35);
+        }
+        .t-reset {
+            width: 80px;
+            height: 80px;
+            font-size: 1rem;
+            background: #e0e0e0;
+            color: #444;
+        }
+        .t-reset:hover {
+            background: #bdbdbd;
+            transform: scale(1.05);
+        }
+        .prog-bar {
+            height: 10px;
+            background: #e8e8e8;
+            border-radius: 5px;
+            max-width: 280px;
+            margin: 15px auto 0;
+            overflow: hidden;
+        }
+        .prog-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        .zikir-btns {
+            margin-top: 25px;
+        }
+        .zikir-btns h4 {
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .nav {
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Bahagian Nota -->
+    <div class="card fade-up" id="nota">
+        <h2>📝 Nota Peribadi</h2>
+        <p style="text-align:center; color:#666; margin-bottom:15px;">Tulis kenangan, doa atau apa-apa nota di sini:</p>
+        <textarea id="noteText" placeholder="Contoh: Tarikh keberangkatan, nama teman perjalanan, harapan dan doa..."></textarea>
+        <div style="margin-top:12px;">
+            <button class="btn btn-green" onclick="saveNote()">💾 Simpan Nota</button>
+            <button class="btn btn-outline" onclick="clearNote()">🗑️ Kosongkan</button>
+            <p class="status" id="noteStatus">✅ Nota telah disimpan!</p>
+        </div>
+    </div>
+
+    <!-- Bahagian Tasbih -->
+    <div class="card tasbih-box fade-up" id="tasbih">
+        <h2>🕌 Tasbih Digital</h2>
+        <div class="t-name" id="zikirName">Subhanallah (33 kali)</div>
+        <div class="t-count" id="tCount">0</div>
+        <div class="prog-bar"><div class="prog-fill" id="tProg"></div></div>
+        <br>
+        <button class="t-btn" onclick="tambahTasbih()">+</button>
+        <br>
+        <button class="t-btn t-reset" onclick="resetTasbih()">🔄 Set Semula</button>
+        
+        <div class="zikir-btns">
+            <h4>Pilih Zikir:</h4>
+            <button class="btn btn-outline" onclick="setZikir('Subhanallah', 33)">Subhanallah (33)</button>
+            <button class="btn btn-outline" onclick="setZikir('Alhamdulillah', 33)">Alhamdulillah (33)</button>
+            <button class="btn btn-outline" onclick="setZikir('Allahu Akbar', 34)">Allahu Akbar (34)</button>
+            <button class="btn btn-outline" onclick="setZikir('La ilaha illallah', 100)">La ilaha illallah (100)</button>
+        </div>
+    </div>
+
+    <!-- Navigasi -->
+    <div class="nav fade-up">
+        <a href="menu.html" class="btn btn-outline">⬅️ Kembali ke Menu Utama</a>
+    </div>
+
+    <script>
+        // === NOTA ===
+        const area = document.getElementById('noteText');
+        const status = document.getElementById('noteStatus');
+        
+        function saveNote() {
+            localStorage.setItem('umrah-note', area.value);
+            status.style.display = 'block';
+            setTimeout(() => status.style.display = 'none', 2500);
+        }
+        function loadNote() {
+            const saved = localStorage.getItem('umrah-note');
+            if (saved) area.value = saved;
+        }
+        function clearNote() {
+            if (confirm('Anda pasti mahu kosongkan nota?')) {
+                area.value = '';
+                localStorage.removeItem('umrah-note');
+            }
+        }
+
+        // === TASBIH ===
+        let count = 0;
+        let target = 33;
+
+        function setZikir(name, num) {
+            document.getElementById('zikirName').textContent = `${name} (${num} kali)`;
+            target = num;
+            count = 0;
+            updateTasbih();
+        }
+        function tambahTasbih() {
+            count++;
+            if (count > target) count = 1;
+            const counter = document.getElementById('tCount');
+            counter.classList.remove('changed');
+            void counter.offsetWidth;
+            counter.classList.add('changed');
+            updateTasbih();
+        }
+        function resetTasbih() {
+            count = 0;
+            updateTasbih();
+        }
+        function updateTasbih() {
+            document.getElementById('tCount').textContent = count;
+            document.getElementById('tProg').style.width = (count / target * 100) + '%';
+        }
+
+        window.onload = function() {
+            loadNote();
+        };
+    </script>
+</body>
+</html>
